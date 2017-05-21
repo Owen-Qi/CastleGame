@@ -44,9 +44,36 @@ public class Game {
     
     // 构建操作
     public void createHandlers() {
-    	this.handler.put("bye", new HandlerBye(this));
-    	this.handler.put("help", new HandlerHelp(this));
-    	this.handler.put("go", new HandlerGo(this));
+    	handler.put("bye", new Handler() {
+			@Override
+			public boolean isExit() { return false; }
+			
+			@Override
+			public void doCmd(String arg0) {
+		        System.out.println("感谢您的光临。再见！");
+			}
+		});
+    	
+    	handler.put("help", new Handler() {
+			@Override
+			public boolean isExit() { return true; }
+			
+			@Override
+			public void doCmd(String arg0) {
+		        System.out.println("迷路了吗？你可以做的命令有：go bye help");
+		        System.out.println("如：\tgo east");				
+			}
+		});
+    	
+    	handler.put("go", new Handler() {
+			@Override
+			public boolean isExit() { return false; }
+			
+			@Override
+			public void doCmd(String arg0) {
+				goRoom(arg0);
+			}
+		});
     }
 
     // 打印欢迎信息
