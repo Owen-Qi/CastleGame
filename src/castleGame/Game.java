@@ -1,3 +1,4 @@
+package castleGame;
 
 public class Game {
 
