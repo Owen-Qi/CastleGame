@@ -92,7 +92,9 @@ public class Game {
 			}
     		
     		Handler action = this.handler.get(words[0]);
-    		action.doCmd(direction);
+    		if (action != null) {
+    			action.doCmd(direction);
+			}
     		
     		if (action.isExit()) { // 如果是退出的handler，则退出循环
 				break;
