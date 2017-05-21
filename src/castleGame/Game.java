@@ -46,7 +46,7 @@ public class Game {
     public void createHandlers() {
     	handler.put("bye", new Handler() {
 			@Override
-			public boolean isExit() { return false; }
+			public boolean isExit() { return true; }
 			
 			@Override
 			public void doCmd(String arg0) {
@@ -56,7 +56,7 @@ public class Game {
     	
     	handler.put("help", new Handler() {
 			@Override
-			public boolean isExit() { return true; }
+			public boolean isExit() { return false; }
 			
 			@Override
 			public void doCmd(String arg0) {
