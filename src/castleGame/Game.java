@@ -1,15 +1,20 @@
 package castleGame;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Game {
     private Room currentRoom;
-        
+    private HashMap<String, Handler> handler = new HashMap<String, Handler>();
+       
+    // 初始化
     public Game() 
     {
         createRooms();
+        createHandlers();
     }
 
+    // 构建房间
     private void createRooms()
     {
         Room outside, lobby, pub, study, bedroom;
@@ -22,11 +27,6 @@ public class Game {
         bedroom = new Room("卧室");
         
         //	初始化房间的出口
-//        outside.setExits(null, lobby, study, pub);
-//        lobby.setExits(null, null, null, outside);
-//        pub.setExits(null, outside, null, null);
-//        study.setExits(outside, bedroom, null, null);
-//        bedroom.setExits(null, null, null, study);
         outside.setExit("east", lobby);
         outside.setExit("south", study);
         outside.setExit("west", pub);
@@ -41,7 +41,15 @@ public class Game {
 
         currentRoom = outside;  //	从城堡门外开始
     }
+    
+    // 构建操作
+    public void createHandlers() {
+    	this.handler.put("bye", new HandlerBye(this));
+    	this.handler.put("help", new HandlerHelp(this));
+    	this.handler.put("go", new HandlerGo(this));
+    }
 
+    // 打印欢迎信息
     private void printWelcome() {
         System.out.println();
         System.out.println("欢迎来到城堡！");
@@ -53,15 +61,8 @@ public class Game {
         System.out.println(currentRoom.getExitDesc());
     }
 
-    // 以下为用户命令
-
-    private void printHelp() 
-    {
-        System.out.println("迷路了吗？你可以做的命令有：go bye help");
-        System.out.println("如：\tgo east");
-    }
-
-    private void goRoom(String direction) 
+    // 操作
+    public void goRoom(String direction) 
     {
         Room nextRoom = currentRoom.getExit(direction);
 
@@ -75,26 +76,37 @@ public class Game {
             System.out.println(currentRoom.getExitDesc());
         }
     }
+
+    // 主循环
+    public void play() {
+		Scanner in = new Scanner(System.in);
+		this.printWelcome();
+		
+    	while ( true ) {
+    		String line = in.nextLine();
+    		String[] words = line.split(" ");
+    		
+    		String direction = "";
+    		if (words.length > 1) {
+    			direction = words[1];
+			}
+    		
+    		Handler action = this.handler.get(words[0]);
+    		action.doCmd(direction);
+    		
+    		if (action.isExit()) { // 如果是退出的handler，则退出循环
+				break;
+			}
+    		
+    	}
+    	in.close();
+	    	
+    }
 	
 	public static void main(String[] args) {
-		Scanner in = new Scanner(System.in);
 		Game game = new Game();
-		game.printWelcome();
+		game.play();
 
-        while ( true ) {
-        		String line = in.nextLine();
-        		String[] words = line.split(" ");
-        		if ( words[0].equals("help") ) {
-        			game.printHelp();
-        		} else if (words[0].equals("go") ) {
-        			game.goRoom(words[1]);
-        		} else if ( words[0].equals("bye") ) {
-        			break;
-        		}
-        }
-        
-        System.out.println("感谢您的光临。再见！");
-        in.close();
 	}
 
 }
